@@ -13,7 +13,7 @@ defmodule Albedo.Worker do
 
   def loop(sensor) do
     read_data(sensor)
-    # :timer.sleep(1000)
+    :timer.sleep(500)
     loop(sensor)
   end
 
@@ -41,10 +41,18 @@ defmodule Albedo.Worker do
     Logger.info "GPS: #{inspect(gps)}"
 
     # write
-    {altitude, _unit} = gps.altitude
-    {:ok, file} = File.open("/root/data.csv", [:append])
-    IO.write(file, "#{gps.date} #{gps.time}, #{albedo(ground,sky)}, #{sky}, #{ground}, #{gps.has_fix}, #{gps.latitude}, #{gps.longitude}, #{altitude}, #{gps.satelites}, #{gps.hdop} #, #{inspect(gps)}\n")
+    # {altitude | _unit} = gps.altitude
+    {:ok, file} = File.open("/root/data.csv", [:append, :sync])
+    IO.write(file, "#{gps.date} #{gps.time}, #{albedo(ground,sky)}, #{sky}, #{ground}, #{gps.has_fix}, #{gps.latitude}, #{gps.longitude}, #{altitude(gps.altitude)}, #{gps.satelites}, #{gps.hdop}, #{gps.speed} #, #{inspect(gps)}\n")
     File.close(file)
+  end
+
+  def altitude({altitude, _rest}) do
+    altitude
+  end
+
+  def altitude({altitude}) do
+    altitude
   end
 
   def albedo(ground,sky) do
@@ -63,8 +71,27 @@ defmodule Albedo.Worker do
 
   def handle_info(:start, sensor) do
     Logger.info "Start looping"
+    Nerves.Leds.set green: :fastblink
+    set_clock()
+    Logger.info "Datetime set"
     Nerves.Leds.set green: :slowblink
-    # TODO if not file write header
     loop(sensor)
+  end
+
+  def wait_for_fix() do
+    :timer.sleep(1000)
+    # read gps
+    {:ok, gps} = XGPS.Ports.get_one_position
+    Logger.info "GPS: #{inspect(gps)}"
+    case gps.has_fix do
+      true -> gps
+      _ -> wait_for_fix()
+    end
+  end
+
+  def set_clock() do
+    gps = wait_for_fix()
+    [time | _rest]  = String.split("#{gps.date} #{gps.time}",".")
+    System.cmd("/bin/date", [time])
   end
 end
