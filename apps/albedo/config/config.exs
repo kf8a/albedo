@@ -10,6 +10,11 @@ use Mix.Config
 # archive.
 
 config :logger,
+  backends: [{LoggerFileBackend, :error_log}]
+  # level: :info
+
+config :logger, :error_log,
+  path: "/root/error.log",
   level: :info
 
 # config UI

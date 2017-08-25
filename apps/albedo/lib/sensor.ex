@@ -29,11 +29,11 @@ defmodule Sensor do
   end
 
   def handle_call(:read_sky, _from, i2c) do
-    {:reply, ADS1115.read(i2c, 0, 16, 32), i2c}
+    {:reply, ADS1115.read(i2c, 0, 16, 8), i2c}
   end
 
   def handle_call(:read_ground, _from, i2c) do
-    {:reply, ADS1115.read(i2c, 3, 8, 32), i2c}
+    {:reply, ADS1115.read(i2c, 3, 16, 8), i2c}
   end
 
 end

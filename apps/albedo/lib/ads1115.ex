@@ -24,6 +24,14 @@ defmodule ADS1115 do
                          4 =>    0x0600,
                          8 =>    0x0800,
                          16 =>   0x0A00}
+
+  @ads1x15_config_max_voltage %{16 =>  256,
+                                 8 => 512,
+                                 4 => 1024,
+                                 2 => 2048,
+                                 1 => 4096,
+                                 0.3 => 6144}
+
   @ads1x15_config_mode_continuous  0x0000
   @ads1x15_config_mode_single      0x0100
   # Mapping of data/sample rate to config register values for ADS1115 (slower).
@@ -80,10 +88,10 @@ defmodule ADS1115 do
 
   def sleep(data_rate) do
     # sleep for 1/dat_rate+ 0.0001) seconds
-    (1/data_rate + 0.0001) * 1000
-    |> Float.ceil
-    |> Kernel.trunc
-    |> :timer.sleep
+    ((1 / data_rate + 0.0001) * 1000)
+      |> Float.ceil
+      |> Kernel.trunc
+      |> :timer.sleep
   end
 
   def read_conversion_register(pid) do
@@ -106,13 +114,6 @@ defmodule ADS1115 do
   end
 
   defp mv(value, gain) do
-    case gain do
-      16 ->  value/32768.0 * 256
-      8 -> value/32768.0 * 512
-      4 -> value/32768.0 * 1024
-      2 -> value/32768.0 * 2048
-      1 -> value/32768.0 * 4096
-      0.3 -> value/32768.0 * 6144
-    end
+      value / 32_768.0 * @ads1x15_config_max_voltage[gain]
   end
 end

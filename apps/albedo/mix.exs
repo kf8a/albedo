@@ -12,11 +12,11 @@ defmodule Albedo.Mixfile do
   def project do
     [app: :albedo,
      version: "0.1.0",
-     elixir: "~> 1.4.0",
+     elixir: "~> 1.5.0",
      description: description(),
      package: package(),
      target: @target,
-     archives: [nerves_bootstrap: "~> 0.4.0"],
+     # archives: [nerves_bootstrap: "~> 0.4.0"],
      deps_path: "deps/#{@target}",
      build_path: "_build/#{@target}",
      lockfile: "mix.lock.#{@target}",
@@ -57,10 +57,11 @@ defmodule Albedo.Mixfile do
   def deps do
     [
       {:ui, in_umbrella: true},
-      {:nerves, "~> 0.6.0", runtime: false},
+      {:nerves, "~> 0.7.0", runtime: false},
       {:nerves_uart, "~> 0.1"},
       {:xgps, "~> 0.4.0"},
       {:bootloader, "~> 0.1"},
+      {:logger_file_backend, "~> 0.0.10"},
       {:nerves_init_gadget, github: "fhunleth/nerves_init_gadget", branch: "master"}
     ] ++
     deps(@target)

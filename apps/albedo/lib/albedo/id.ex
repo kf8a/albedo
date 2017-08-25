@@ -5,7 +5,7 @@ defmodule Albedo.Id do
   Start a new ID agent
   """
   def start_link() do
-    Agent.start_link(fn -> {:pause} end)
+    Agent.start_link(fn -> :pause end)
   end
 
   @doc """
@@ -18,14 +18,14 @@ defmodule Albedo.Id do
   @doc """
   start a new ID
   """
-  def start(pid,{latitude, longitude}) do
+  def start(pid,{latitude, longitude, date, time}) do
     current =
       Agent.get(pid, fn state -> state end)
 
     case current do
-      {:pause} ->
-        id = new_id(latitude, longitude)
-        Agent.update(pid, fn (_state) -> {:ok, id} end)
+      :pause ->
+        id = new_id(latitude, longitude, date, time)
+        Agent.update(pid, fn (_state) -> id end)
       _ -> current
     end
   end
@@ -36,17 +36,16 @@ defmodule Albedo.Id do
   def pause(pid) do
     current  = Agent.get(pid, fn state -> state end)
     case current do
-      {:ok, _id} -> Agent.update(pid, fn (_state) -> {:pause} end)
-      _ -> current
+      :pause -> current
+      _ -> Agent.update(pid, fn (_state) -> :pause end)
     end
   end
 
-  defp new_id(latitude, longitude) do
-    id_string = Float.to_string(latitude) <> Float.to_string(longitude)
+  defp new_id(latitude, longitude, date, time) do
+    id_string = Float.to_string(latitude) <> Float.to_string(longitude) <> Date.to_string(date) <> Time.to_string(time)
     :crypto.hash(:md5, id_string)
     |> Base.encode64
     |> String.downcase
-    |> IO.inspect
   end
 
 end

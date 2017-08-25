@@ -18,6 +18,7 @@ defmodule Ui.Web.Router do
 
     get "/", PageController, :index
     get "/clean", PageController, :clean
+    get "/log", PageController, :log
   end
 
   # Other scopes may use custom stacks.
