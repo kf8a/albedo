@@ -43,7 +43,7 @@ defmodule Albedo.Worker do
 
     # read gps
     {:ok, gps} = XGPS.Ports.get_one_position
-    # Logger.debug "GPS: #{inspect(gps)}"
+    Logger.debug "GPS: #{inspect(gps)}"
 
     if slow?(gps) do
       Albedo.Id.start(ids, {gps.latitude, gps.longitude, gps.date, gps.time})
@@ -52,10 +52,10 @@ defmodule Albedo.Worker do
     end
 
     # write
-    # {altitude | _unit} = gps.altitude
     {:ok, file} = File.open("/root/data.csv", [:append, :sync])
     timestamp = DateTime.to_iso8601(DateTime.utc_now)
-    IO.write(file, "#{Albedo.Id.get(ids)}, #{timestamp}, #{albedo(ground,sky)}, #{sky}, #{ground}, #{gps.has_fix}, #{gps.latitude}, #{gps.longitude}, #{altitude(gps.altitude)}, #{gps.satelites}, #{gps.hdop}, #{gps.speed} #, #{inspect(gps)}\n")
+    IO.write(file, "#{Albedo.Id.get(ids)}, #{timestamp}, #{albedo(ground,sky)}, #{sky}, #{ground}, #{gps.has_fix}, #{gps.latitude}, #{gps.longitude}, #{altitude(gps.altitude)}, #{gps.satelites}, #{gps.hdop}, #{gps.speed}, # #{inspect(gps)}\n")
+    # IO.write(file, "#{timestamp}, #{gps.has_fix}, #{gps.latitude}, #{gps.longitude}, #{altitude(gps.altitude)}, #{gps.satelites}, #{gps.hdop}, #{gps.speed} #, #{inspect(gps)}\n")
     File.close(file)
   end
 

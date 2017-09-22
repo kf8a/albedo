@@ -9,12 +9,12 @@ defmodule ADS1115 do
   require Logger
 
   # Register and other configuration values:
-  @ads1x15_default_address         0x48
+  # @ads1x15_default_address         0x48
   @ads1x15_pointer_conversion      <<0x00>>
   @ads1x15_pointer_config          0x01
-  @ads1x15_pointer_low_threshold   0x02
-  @ads1x15_pointer_high_threshold  0x03
-  @ads1x15_config_os_single        << 0x80, 0x00>>
+  # @ads1x15_pointer_low_threshold   0x02
+  # @ads1x15_pointer_high_threshold  0x03
+  # @ads1x15_config_os_single        << 0x80, 0x00>>
   @ads1x15_config_mux_offset       12
 
   # Maping of gain values to config register values.
@@ -32,7 +32,7 @@ defmodule ADS1115 do
                                  1 => 4096,
                                  0.3 => 6144}
 
-  @ads1x15_config_mode_continuous  0x0000
+  # @ads1x15_config_mode_continuous  0x0000
   @ads1x15_config_mode_single      0x0100
   # Mapping of data/sample rate to config register values for ADS1115 (slower).
   @data_rate_config %{8 =>    0x0000,
@@ -44,12 +44,12 @@ defmodule ADS1115 do
                       475 =>  0x00C0,
                       860 =>  0x00E0}
 
-  @ads1x15_config_comp_window      0x0010
-  @ads1x15_config_comp_active_high 0x0008
-  @ads1x15_config_comp_latching    0x0004
-  @ads1x15_config_comp_que [{1, 0x0000},
-                            {2, 0x0001},
-                            {4, 0x0002}]
+  # @ads1x15_config_comp_window      0x0010
+  # @ads1x15_config_comp_active_high 0x0008
+  # @ads1x15_config_comp_latching    0x0004
+  # @ads1x15_config_comp_que [{1, 0x0000},
+  #                           {2, 0x0001},
+  #                           {4, 0x0002}]
   @ads1x15_config_comp_que_disable 0x0003
 
 
